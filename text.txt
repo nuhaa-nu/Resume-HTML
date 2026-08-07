@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Resume</title>
+</head>
+
+<body>
+
+<marquee direction="right">
+<h1>MY RESUME</h1>
+</marquee>
+
+<h2>Nuhaa</h2>
+
+<p><b>Email:</b> nuhaamichaeljackson7@gmail.com</p>
+
+<p><b>LinkedIn:</b> https://www.linkedin.com/in/nuhaa</p>
+
+<p><b>GitHub:</b> https://github.com/nuhaa-nu</p>
+
+<hr>
+
+<h2>Educational Qualification</h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+<tr>
+<th>Qualification</th>
+<th>Institution</th>
+<th>Percentage</th>
+</tr>
+
+<tr>
+<td>SSLC (10th)</td>
+<td>Senthil Higher Secondary School</td>
+<td>90%</td>
+</tr>
+
+<tr>
+<td>HSC (12th)</td>
+<td>Senthil Higher Secondary School</td>
+<td>82%</td>
+</tr>
+
+<tr>
+<td>B.E Computer Science and Engineering</td>
+<td>Dhirajlal Gandhi College of Technology</td>
+<td>Pursuing</td>
+</tr>
+
+</table>
+
+<h2><b>Technical Skills</b></h2>
+
+<ol>
+<li>C</li>
+<li>C++</li>
+<li>Java</li>
+<li>Python</li>
+<li>HTML</li>
+<li>CSS</li>
+</ol>
+
+<h2>Certifications</h2>
+
+<ul>
+<li>Kalam Award</li>
+<li>Smart India Hackathon (SIH)</li>
+<li>CodeAlpha Frontend Development Internship</li>
+</ul>
+
+<h2>Personal Details</h2>
+
+<p><b>Name:</b> Nuhaa</p>
+<p><b>Date of Birth:</b> 04/07/2006</p>
+<p><b>Gender:</b> Female</p>
+<p><b>Nationality:</b> Indian</p>
+
+<hr>
+
+<p><b>Date:</b> 06/08/2026</p>
+
+<p><b>Place:</b> Dharmapuri</p>
+
+<p align="right">
+<b>Name:</b> Nuhaa
+</p>
+
+</body>
+</html>
