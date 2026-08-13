@@ -1,89 +1,348 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Resume</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Forecast</title>
+<style>
+  :root{
+    --sky-top:#0b1f3a;
+    --sky-mid:#2a5298;
+    --sky-low:#77a8d9;
+    --sun:#ffc857;
+    --card:#0f2744cc;
+    --ink:#eaf2ff;
+    --ink-dim:#a9c1e0;
+    --line:#25446f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 55%,var(--sky-low) 100%);
+    color:var(--ink);
+    padding:24px 16px 60px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .wrap{width:100%;max-width:720px;}
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  h1{
+    font-size:1.4rem;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+  .loc-form{
+    display:flex;
+    gap:8px;
+    flex:1;
+    min-width:220px;
+    justify-content:flex-end;
+  }
+  .loc-form input{
+    background:#0f274499;
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:.85rem;
+    width:140px;
+  }
+  .loc-form button, .geo-btn{
+    background:var(--sun);
+    color:#1a1300;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    font-size:.85rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .geo-btn{background:#0f274499;color:var(--ink);border:1px solid var(--line);}
+
+  #status{
+    text-align:center;
+    color:var(--ink-dim);
+    padding:40px 0;
+    font-size:.95rem;
+  }
+
+  .current{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:26px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    backdrop-filter:blur(6px);
+  }
+  .current .place{
+    font-size:1rem;
+    color:var(--ink-dim);
+    margin-bottom:4px;
+  }
+  .current .temp{
+    font-size:3.2rem;
+    font-weight:700;
+    line-height:1;
+  }
+  .current .desc{
+    margin-top:6px;
+    color:var(--ink-dim);
+    font-size:.9rem;
+  }
+  .current .icon{font-size:3.4rem;}
+  .meta-row{
+    display:flex;
+    gap:14px;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .meta{
+    flex:1;
+    min-width:100px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    text-align:center;
+  }
+  .meta .label{font-size:.72rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.6px;}
+  .meta .val{font-size:1.15rem;font-weight:600;margin-top:4px;}
+
+  .section-label{
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--ink-dim);
+    margin:22px 0 10px 4px;
+  }
+  .hourly{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding-bottom:8px;
+  }
+  .hour-card{
+    flex:0 0 auto;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    text-align:center;
+    min-width:64px;
+  }
+  .hour-card .t{font-size:.75rem;color:var(--ink-dim);}
+  .hour-card .ic{font-size:1.3rem;margin:6px 0;}
+  .hour-card .v{font-weight:600;}
+
+  .daily{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .day-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    font-size:.9rem;
+  }
+  .day-row:last-child{border-bottom:none;}
+  .day-row .dname{width:90px;color:var(--ink-dim);}
+  .day-row .dic{width:40px;text-align:center;font-size:1.2rem;}
+  .day-row .drange{flex:1;text-align:right;}
+
+  footer{
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:.72rem;
+    margin-top:26px;
+  }
+  ::-webkit-scrollbar{height:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+</style>
 </head>
-
 <body>
+<div class="wrap">
+  <header>
+    <h1>🌤 Weather Forecast</h1>
+    <form class="loc-form" id="locForm">
+      <input type="text" id="locInput" placeholder="City name" value="Salem, Tamil Nadu"/>
+      <button type="submit">Go</button>
+      <button type="button" class="geo-btn" id="geoBtn">📍</button>
+    </form>
+  </header>
 
-<marquee direction="right">
-<h1>MY RESUME</h1>
-</marquee>
+  <div id="status">Loading weather…</div>
+  <div id="content" style="display:none;">
+    <div class="current">
+      <div>
+        <div class="place" id="placeName">--</div>
+        <div class="temp"><span id="curTemp">--</span>°C</div>
+        <div class="desc" id="curDesc">--</div>
+      </div>
+      <div class="icon" id="curIcon">☀️</div>
+    </div>
 
-<h2>Nuhaa</h2>
+    <div class="meta-row">
+      <div class="meta"><div class="label">Feels like</div><div class="val" id="feelsLike">--°</div></div>
+      <div class="meta"><div class="label">Humidity</div><div class="val" id="humidity">--%</div></div>
+      <div class="meta"><div class="label">Wind</div><div class="val" id="wind">-- km/h</div></div>
+    </div>
 
-<p><b>Email:</b> nuhaamichaeljackson7@gmail.com</p>
+    <div class="section-label">Next 24 Hours</div>
+    <div class="hourly" id="hourly"></div>
 
-<p><b>LinkedIn:</b> https://www.linkedin.com/in/nuhaa</p>
+    <div class="section-label">7-Day Forecast</div>
+    <div class="daily" id="daily"></div>
+  </div>
 
-<p><b>GitHub:</b> https://github.com/nuhaa-nu</p>
+  <footer>Data via Open-Meteo JSON API</footer>
+</div>
 
-<hr>
+<script>
+const statusEl = document.getElementById('status');
+const contentEl = document.getElementById('content');
 
-<h2>Educational Qualification</h2>
+// WMO weather code -> icon + description
+const WMO = {
+  0:['☀️','Clear sky'],1:['🌤','Mainly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
+  45:['🌫','Fog'],48:['🌫','Depositing rime fog'],
+  51:['🌦','Light drizzle'],53:['🌦','Drizzle'],55:['🌧','Dense drizzle'],
+  61:['🌧','Slight rain'],63:['🌧','Rain'],65:['🌧','Heavy rain'],
+  71:['🌨','Slight snow'],73:['🌨','Snow'],75:['❄️','Heavy snow'],
+  80:['🌦','Rain showers'],81:['🌧','Rain showers'],82:['⛈','Violent showers'],
+  95:['⛈','Thunderstorm'],96:['⛈','Thunderstorm w/ hail'],99:['⛈','Severe thunderstorm']
+};
+function wmoInfo(code){ return WMO[code] || ['🌡','Unknown']; }
 
-<table border="1" cellpadding="8" cellspacing="0">
-<tr>
-<th>Qualification</th>
-<th>Institution</th>
-<th>Percentage</th>
-</tr>
+async function geocode(name){
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if(!data.results || !data.results.length) throw new Error('Location not found');
+  const r = data.results[0];
+  return { lat:r.latitude, lon:r.longitude, label:`${r.name}${r.admin1 ? ', '+r.admin1:''}` };
+}
 
-<tr>
-<td>SSLC (10th)</td>
-<td>Senthil Higher Secondary School</td>
-<td>90%</td>
-</tr>
+async function fetchWeather(lat, lon){
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m` +
+    `&hourly=temperature_2m,weather_code` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+    `&timezone=auto&forecast_days=7`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('Weather API error');
+  return res.json(); // <-- this is the JSON payload we render below
+}
 
-<tr>
-<td>HSC (12th)</td>
-<td>Senthil Higher Secondary School</td>
-<td>82%</td>
-</tr>
+function renderWeather(json, label){
+  const cur = json.current;
+  const [curIcon, curDesc] = wmoInfo(cur.weather_code);
 
-<tr>
-<td>B.E Computer Science and Engineering</td>
-<td>Dhirajlal Gandhi College of Technology</td>
-<td>Pursuing</td>
-</tr>
+  document.getElementById('placeName').textContent = label;
+  document.getElementById('curTemp').textContent = Math.round(cur.temperature_2m);
+  document.getElementById('curDesc').textContent = curDesc;
+  document.getElementById('curIcon').textContent = curIcon;
+  document.getElementById('feelsLike').textContent = Math.round(cur.apparent_temperature) + '°';
+  document.getElementById('humidity').textContent = cur.relative_humidity_2m + '%';
+  document.getElementById('wind').textContent = Math.round(cur.wind_speed_10m) + ' km/h';
 
-</table>
+  // Hourly: next 24 hours from now
+  const hourly = json.hourly;
+  const nowIdx = hourly.time.findIndex(t => t === json.current.time.slice(0,13)+':00') ;
+  const startIdx = nowIdx >= 0 ? nowIdx : 0;
+  const hourlyEl = document.getElementById('hourly');
+  hourlyEl.innerHTML = '';
+  for(let i = startIdx; i < startIdx + 24 && i < hourly.time.length; i++){
+    const dt = new Date(hourly.time[i]);
+    const hourLabel = dt.getHours().toString().padStart(2,'0') + ':00';
+    const [ic] = wmoInfo(hourly.weather_code[i]);
+    const div = document.createElement('div');
+    div.className = 'hour-card';
+    div.innerHTML = `<div class="t">${hourLabel}</div><div class="ic">${ic}</div><div class="v">${Math.round(hourly.temperature_2m[i])}°</div>`;
+    hourlyEl.appendChild(div);
+  }
 
-<h2><b>Technical Skills</b></h2>
+  // Daily
+  const daily = json.daily;
+  const dailyEl = document.getElementById('daily');
+  dailyEl.innerHTML = '';
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  daily.time.forEach((d, i) => {
+    const dt = new Date(d);
+    const name = i === 0 ? 'Today' : dayNames[dt.getDay()];
+    const [ic] = wmoInfo(daily.weather_code[i]);
+    const row = document.createElement('div');
+    row.className = 'day-row';
+    row.innerHTML = `<div class="dname">${name}</div><div class="dic">${ic}</div>
+      <div class="drange">${Math.round(daily.temperature_2m_min[i])}° / ${Math.round(daily.temperature_2m_max[i])}°</div>`;
+    dailyEl.appendChild(row);
+  });
 
-<ol>
-<li>C</li>
-<li>C++</li>
-<li>Java</li>
-<li>Python</li>
-<li>HTML</li>
-<li>CSS</li>
-</ol>
+  statusEl.style.display = 'none';
+  contentEl.style.display = 'block';
+}
 
-<h2>Certifications</h2>
+async function loadByName(name){
+  try{
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Loading weather…';
+    contentEl.style.display = 'none';
+    const loc = await geocode(name);
+    const json = await fetchWeather(loc.lat, loc.lon);
+    renderWeather(json, loc.label);
+  }catch(err){
+    statusEl.textContent = 'Could not load weather: ' + err.message;
+  }
+}
 
-<ul>
-<li>Kalam Award</li>
-<li>Smart India Hackathon (SIH)</li>
-<li>CodeAlpha Frontend Development Internship</li>
-</ul>
+async function loadByCoords(lat, lon, label){
+  try{
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Loading weather…';
+    contentEl.style.display = 'none';
+    const json = await fetchWeather(lat, lon);
+    renderWeather(json, label || `${lat.toFixed(2)}, ${lon.toFixed(2)}`);
+  }catch(err){
+    statusEl.textContent = 'Could not load weather: ' + err.message;
+  }
+}
 
-<h2>Personal Details</h2>
+document.getElementById('locForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const val = document.getElementById('locInput').value.trim();
+  if(val) loadByName(val);
+});
 
-<p><b>Name:</b> Nuhaa</p>
-<p><b>Date of Birth:</b> 04/07/2006</p>
-<p><b>Gender:</b> Female</p>
-<p><b>Nationality:</b> Indian</p>
+document.getElementById('geoBtn').addEventListener('click', () => {
+  if(!navigator.geolocation){
+    statusEl.textContent = 'Geolocation not supported by this browser.';
+    return;
+  }
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Getting your location…';
+  navigator.geolocation.getCurrentPosition(
+    pos => loadByCoords(pos.coords.latitude, pos.coords.longitude, 'Your location'),
+    () => { statusEl.textContent = 'Location access denied. Search a city instead.'; }
+  );
+});
 
-<hr>
-
-<p><b>Date:</b> 06/08/2026</p>
-
-<p><b>Place:</b> Dharmapuri</p>
-
-<p align="right">
-<b>Name:</b> Nuhaa
-</p>
-
+// Initial load: Salem, Tamil Nadu
+loadByName('Salem, Tamil Nadu');
+</script>
 </body>
 </html>
